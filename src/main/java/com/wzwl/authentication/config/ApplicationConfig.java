@@ -1,6 +1,7 @@
 package com.wzwl.authentication.config;
 
 import com.wzwl.authentication.filter.LoginFilter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -16,14 +17,21 @@ import java.util.List;
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
 
-    //private static final List<String> EXCLUDE_PATH= Arrays.asList("/login","/user/login","/","/css/**","/js/**","/img/**","/media/**","/vendors/**");
+    private static final List<String> EXCLUDE_PATH= Arrays.asList("login","/login","/user/login","/","/css/**",
+            "/js/**","/img/**","/media/**","/vendors/**","/templates/**");
+
+    @Bean
+    public LoginFilter loginFilter(){
+        return new LoginFilter();
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginFilter())
                 .addPathPatterns("/**")
                 //.addPathPatterns("/index")
-                .excludePathPatterns("/login","/user/login","/login.html","/index.html");
+                .excludePathPatterns(EXCLUDE_PATH);
+                //.excludePathPatterns("/login","/user/login","/login.html","/index.html");
     }
 
 

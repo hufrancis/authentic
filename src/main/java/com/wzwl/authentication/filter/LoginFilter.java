@@ -25,8 +25,8 @@ public class LoginFilter extends HandlerInterceptorAdapter {
             return true;
         }
         // 跳转登录
-        String url = "/login";
-        response.sendRedirect(url);
+        //request.getRequestDispatcher("/login.html").forward(request,response);
+        response.sendRedirect("/login");
         return false;
     }
 

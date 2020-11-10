@@ -30,8 +30,9 @@ public class AuthenticationController {
      * 定向到登陆页面
      * @return
      */
-    @RequestMapping("/login")
+    @GetMapping("/login")
     public String test(){
+
         return "login";
     }
 
@@ -41,7 +42,7 @@ public class AuthenticationController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    @GetMapping(value = "/index")
     public String users(HttpServletRequest request) {
         try {
             String token = CommonUtil.getTokenFromRequest(request);
@@ -62,7 +63,7 @@ public class AuthenticationController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/user/login", method = RequestMethod.GET)
+    @GetMapping(value = "/user/login")
     public String loginCheck(@RequestParam(value = "username", required = true) String username,
                              @RequestParam(value = "password", required = true) String password, HttpServletResponse response,
                              HttpServletRequest request) {
