@@ -6,6 +6,11 @@ package com.wzwl.authentication.service;
  */
 public interface UserService {
 
+    /**
+     * 通过用户名查询密码
+     * @param username
+     * @return
+     */
     String getPasswordByName(String username);
 
 }

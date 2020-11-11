@@ -8,7 +8,7 @@ server:
 #    #证书的路径.
 #    key-store: classpath:keystore.p12
 #    #证书密码，请修改为您自己证书的密码.
-#    key-store-password: xinwei2020
+#    key-store-password: 123456
 #    #秘钥库类型
 #    key-store-type: PKCS12
 #    #证书别名

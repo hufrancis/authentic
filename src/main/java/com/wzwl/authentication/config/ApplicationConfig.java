@@ -3,9 +3,7 @@ package com.wzwl.authentication.config;
 import com.wzwl.authentication.filter.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,21 +15,23 @@ import java.util.List;
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
 
-    private static final List<String> EXCLUDE_PATH= Arrays.asList("login","/login","/user/login","/","/css/**",
-            "/js/**","/img/**","/media/**","/vendors/**","/templates/**");
-
-    @Bean
-    public LoginFilter loginFilter(){
-        return new LoginFilter();
-    }
+    private static final List<String> EXCLUDE_PATH= Arrays.asList("/login/check/**","/login**",
+            "/css/**", "/js/**","/img/**","/templates/**");
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginFilter())
-                .addPathPatterns("/**")
-                //.addPathPatterns("/index")
-                .excludePathPatterns(EXCLUDE_PATH);
-                //.excludePathPatterns("/login","/user/login","/login.html","/index.html");
+        InterceptorRegistration registration = registry.addInterceptor(new LoginFilter());
+        registration.addPathPatterns("/**");
+        registration.excludePathPatterns(EXCLUDE_PATH);
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String relativePath = System.getProperty("user.dir");
+        String rootPath = relativePath.split("\\\\")[0];
+        String productImgName = rootPath +"/"+"images/";
+        String path = "file:"+productImgName;
+        registry.addResourceHandler("/images/**").addResourceLocations(path);
     }
 
 

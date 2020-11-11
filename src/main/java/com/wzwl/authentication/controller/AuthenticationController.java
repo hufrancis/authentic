@@ -1,9 +1,7 @@
 package com.wzwl.authentication.controller;
 
 import com.wzwl.authentication.service.UserService;
-import com.wzwl.authentication.utils.CommonUtil;
-import com.wzwl.authentication.utils.Md5Util;
-import com.wzwl.authentication.utils.RedisUtil;
+import com.wzwl.authentication.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -13,9 +11,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
-@Controller
+@RestController
 public class AuthenticationController {
 
 
@@ -27,69 +27,47 @@ public class AuthenticationController {
 
 
     /**
-     * 定向到登陆页面
-     * @return
+     *
      */
-    @GetMapping("/login")
-    public String test(){
+    @PostMapping("/index")
+    @ResponseBody
+    public ResponseInfoData index() {
 
-        return "login";
-    }
-
-
-    /**
-     * 跳转首页
-     * @param request
-     * @return
-     */
-    @GetMapping(value = "/index")
-    public String users(HttpServletRequest request) {
-        try {
-            String token = CommonUtil.getTokenFromRequest(request);
-            if (StringUtils.isNotEmpty(token)){
-                return "index";
-            }
-        } catch (Exception e) {
-            log.error("首页跳转发生异常exceptions-->" + e.toString());
-        }
-        return "login";
+        Map<String,String> resultMap = new HashMap<>();
+        resultMap.put("result","测试成功");
+        return ResponseInfoUtils.createSuccess(resultMap);
     }
 
     /**
-     * 登陆认证
+     * 登录认证
      * @param username
      * @param password
-     * @param response
-     * @param request
      * @return
      */
-    @GetMapping(value = "/user/login")
-    public String loginCheck(@RequestParam(value = "username", required = true) String username,
-                             @RequestParam(value = "password", required = true) String password, HttpServletResponse response,
-                             HttpServletRequest request) {
+    @GetMapping("login/check")
+    @ResponseBody
+    public ResponseInfoData loginCheck(@RequestParam(value = "username", required = true) String username,
+                                       @RequestParam(value = "password", required = true) String password) {
         try {
-            if (StringUtils.isNotEmpty(username)&&StringUtils.isNotEmpty(password)) {
-                //取出密码
-                String realPwd = userService.getPasswordByName(username);
-                if (realPwd.equals(password)) {
-                    //登陆成功
-                    String token = Md5Util.encryPassword(username+password);
-
-                    redisUtil.set(token, username, 60 * 60 * 24);
-                    Cookie cookie = new Cookie("authenticationCode", token);
-                    cookie.setMaxAge(60 * 30);
-                    cookie.setPath("/");
-                    cookie.setHttpOnly(false);
-
-                    response.addCookie(cookie);   //登陆成功 ，返回 到index页面   todo
-
-                    return "index";
-                }
+            if (StringUtils.isEmpty(username)|| StringUtils.isEmpty(password)){
+                return ResponseInfoUtils.createFail("用户名或密码不能为空");
+            }
+            String realPass = userService.getPasswordByName(username);
+            if (StringUtils.isEmpty(realPass)){
+                return ResponseInfoUtils.createFail("该用户名不存在");
+            }
+            if (realPass.equals(password)){
+                String token = Md5Util.encryPassword(username+password);
+                redisUtil.set(token,username,Constants.TOKEN_EXPIRED_TIME);
+                Map<String,String> resultMap = new HashMap<>();
+                resultMap.put("token",token);
+                resultMap.put("username",username);
+                return ResponseInfoUtils.createSuccess(resultMap);
             }
         }catch (Exception e){
-            e.printStackTrace();
+            return ResponseInfoUtils.createFail("登陆失败");
         }
-        return "error";
+        return ResponseInfoUtils.createFail("用户名或密码错误！");
     }
 
 
