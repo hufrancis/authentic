@@ -1,7 +1,6 @@
 package com.wzwl.authentication.config;
 
 import com.wzwl.authentication.filter.LoginFilter;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
 
@@ -41,6 +40,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
                 .allowedOrigins("*")
                 .allowedMethods("POST", "GET")
                 .maxAge(30*60)
-                .allowCredentials(true);//设置成允许操作cookie
+                //设置成允许操作cookie
+                .allowCredentials(true);
     }
 }

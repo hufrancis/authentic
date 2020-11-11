@@ -6,6 +6,9 @@ package com.wzwl.authentication.utils;
  */
 public final class Constants {
 
+    private Constants() {
+    }
+
     /**
      * redis中token过期时间
      */

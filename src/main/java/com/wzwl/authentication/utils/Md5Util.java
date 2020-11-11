@@ -1,13 +1,8 @@
 package com.wzwl.authentication.utils;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Throwables;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
+import org.apache.commons.codec.digest.DigestUtils;
+
 
 /**
  * @author huff
@@ -17,23 +12,10 @@ public class Md5Util {
 
     private static final String salt = "wzwl2020";
 
-    private static final HashFunction FUNCTION = Hashing.md5();
-
-    private static final HashFunction MURMUR_FUNC = Hashing.murmur3_128();
-
     public static String encryPassword(String password){
-        HashCode code = FUNCTION.hashString(password+Md5Util.salt, Charset.forName("UTF-8"));
-        return code.toString();
+
+        return DigestUtils.md5Hex(password+salt);
     }
 
-    public static String hashString(String input){
-        HashCode code = null;
-        try {
-            code = MURMUR_FUNC.hashBytes(input.getBytes("utf-8"));
-        } catch (UnsupportedEncodingException e) {
-            Throwables.propagate(e);
-        }
-        return code.toString();
-    }
 
 }
